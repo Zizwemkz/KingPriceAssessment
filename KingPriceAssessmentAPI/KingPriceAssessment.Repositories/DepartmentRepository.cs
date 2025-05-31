@@ -12,18 +12,18 @@ namespace KingPriceAssessment.Repositories
 {
     public class DepartmentRepository : IDepartmentRepository
     {
-        private readonly EmployeeDbContext _EmployeeDb;
+        private readonly EmployeeDbContext _employeeDbContext;
 
-        public DepartmentRepository(EmployeeDbContext context)
+        public DepartmentRepository(EmployeeDbContext employeeDbContext)
         {
-            _EmployeeDb = context;
+            _employeeDbContext = employeeDbContext;
         }
 
         public async Task<IEnumerable<Department>> GetAllAsync()
         {
             try
             {
-                return await _EmployeeDb.Departments.ToListAsync();
+                return await _employeeDbContext.Departments.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -32,14 +32,9 @@ namespace KingPriceAssessment.Repositories
         }
         public async Task<Department> GetByIdAsync(int id)
         {
-            if (id <= 0)
-                throw new ArgumentException("Department ID must be greater than 0.", nameof(id));
-
             try
             {
-                var department = await _EmployeeDb.Departments.FindAsync(id);
-                if (department == null)
-                    throw new KeyNotFoundException($"No department found with ID {id}.");
+                var department = await _employeeDbContext.Departments.FindAsync(id);
                 return department;
             }
             catch (Exception ex)
@@ -54,11 +49,8 @@ namespace KingPriceAssessment.Repositories
 
             try
             {
-                if (await _EmployeeDb.Departments.AnyAsync(d => d.DepartmentName.ToLower() == department.DepartmentName.ToLower()))
-                    throw new InvalidOperationException($"A department with the name '{department.DepartmentName}' already exists.");
-
-                await _EmployeeDb.Departments.AddAsync(department);
-                await _EmployeeDb.SaveChangesAsync();
+                await _employeeDbContext.Departments.AddAsync(department);
+                await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -72,15 +64,8 @@ namespace KingPriceAssessment.Repositories
 
             try
             {
-                var existingDepartment = await _EmployeeDb.Departments.FindAsync(department.Id);
-                if (existingDepartment == null)
-                    throw new KeyNotFoundException($"No department found with ID {department.Id}.");
-
-                if (await _EmployeeDb.Departments.AnyAsync(d => d.DepartmentName.ToLower() == department.DepartmentName.ToLower() && d.Id != department.Id))
-                    throw new InvalidOperationException($"A department with the name '{department.DepartmentName}' already exists.");
-
-                _EmployeeDb.Entry(existingDepartment).CurrentValues.SetValues(department);
-                await _EmployeeDb.SaveChangesAsync();
+                _employeeDbContext.Departments.Update(department);
+                await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -89,17 +74,11 @@ namespace KingPriceAssessment.Repositories
         }
         public async Task DeleteAsync(int id)
         {
-            if (id <= 0)
-                throw new ArgumentException("Department ID must be greater than 0.", nameof(id));
-
             try
             {
-                var dpt = await _EmployeeDb.Departments.FindAsync(id);
-                if (dpt == null)
-                    throw new KeyNotFoundException($"No department found with ID {id}.");
-
-                _EmployeeDb.Departments.Remove(dpt);
-                await _EmployeeDb.SaveChangesAsync();
+                var dpt = await _employeeDbContext.Departments.FindAsync(id);
+                _employeeDbContext.Departments.Remove(dpt);
+                await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {

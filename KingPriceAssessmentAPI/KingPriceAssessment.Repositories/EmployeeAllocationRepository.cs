@@ -12,18 +12,18 @@ namespace KingPriceAssessment.Repositories
 {
     public class EmployeeAllocationRepository : IEmployeeAllocationRepository
     {
-        private readonly EmployeeDbContext EmployeeDbContext;
+        private readonly EmployeeDbContext _employeeDbContext;
 
-        public EmployeeAllocationRepository(EmployeeDbContext context)
+        public EmployeeAllocationRepository(EmployeeDbContext employeeDbContext)
         {
-            EmployeeDbContext = context;
+            _employeeDbContext = employeeDbContext;
         }
 
         public async Task<IEnumerable<EmployeeAllocation>> GetAllAsync()
         {
             try
             {
-                return await EmployeeDbContext.EmployeeAllocation
+                return await _employeeDbContext.EmployeeAllocation
                     .Include(a => a.Employee)
                     .Include(a => a.Role)
                     .Include(a => a.Department)
@@ -37,19 +37,13 @@ namespace KingPriceAssessment.Repositories
 
         public async Task<EmployeeAllocation> GetByIdAsync(int id)
         {
-            if (id <= 0)
-                throw new ArgumentException("EmployeeAllocation ID must be greater than 0.", nameof(id));
-
             try
             {
-                var allocation = await EmployeeDbContext.EmployeeAllocation
+                var allocation = await _employeeDbContext.EmployeeAllocation
                     .Include(a => a.Employee)
                     .Include(a => a.Role)
                     .Include(a => a.Department)
                     .FirstOrDefaultAsync(a => a.Id == id);
-
-                if (allocation == null)
-                    throw new KeyNotFoundException($"No EmployeeAllocation found with ID {id}.");
 
                 return allocation;
             }
@@ -64,7 +58,7 @@ public async Task AddAsync(EmployeeAllocation allocation)
         {
             try
             {
-                if (await EmployeeDbContext.EmployeeAllocation.AnyAsync(a =>
+                if (await _employeeDbContext.EmployeeAllocation.AnyAsync(a =>
                         a.EmployeeId == allocation.EmployeeId &&
                         a.RoleId == allocation.RoleId &&
                         a.DepartmentId == allocation.DepartmentId))
@@ -72,8 +66,8 @@ public async Task AddAsync(EmployeeAllocation allocation)
                     throw new InvalidOperationException("This allocation already exists for the specified employee, role, and department.");
                 }
 
-                await EmployeeDbContext.EmployeeAllocation.AddAsync(allocation);
-                await EmployeeDbContext.SaveChangesAsync();
+                await _employeeDbContext.EmployeeAllocation.AddAsync(allocation);
+                await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -85,11 +79,7 @@ public async Task AddAsync(EmployeeAllocation allocation)
         {
             try
             {
-                var existingAllocation = await EmployeeDbContext.EmployeeAllocation.FindAsync(allocation.Id);
-                if (existingAllocation == null)
-                    throw new KeyNotFoundException($"No EmployeeAllocation found with ID {allocation.Id}.");
-
-                if (await EmployeeDbContext.EmployeeAllocation.AnyAsync(a =>
+                if (await _employeeDbContext.EmployeeAllocation.AnyAsync(a =>
                         a.EmployeeId == allocation.EmployeeId &&
                         a.RoleId == allocation.RoleId &&
                         a.DepartmentId == allocation.DepartmentId &&
@@ -98,8 +88,8 @@ public async Task AddAsync(EmployeeAllocation allocation)
                     throw new InvalidOperationException("This allocation already exists for the specified employee, role, and department.");
                 }
 
-                EmployeeDbContext.EmployeeAllocation.Update(allocation);
-                await EmployeeDbContext.SaveChangesAsync();
+                _employeeDbContext.EmployeeAllocation.Update(allocation);
+                await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -107,22 +97,16 @@ public async Task AddAsync(EmployeeAllocation allocation)
             }
 
            
-            await EmployeeDbContext.SaveChangesAsync();
+            await _employeeDbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            if (id <= 0)
-                throw new ArgumentException("EmployeeAllocation ID must be greater than 0.", nameof(id));
-
             try
             {
-                var allocation = await EmployeeDbContext.EmployeeAllocation.FindAsync(id);
-                if (allocation == null)
-                    throw new KeyNotFoundException($"No EmployeeAllocation found with ID {id}.");
-
-                EmployeeDbContext.EmployeeAllocation.Remove(allocation);
-                await EmployeeDbContext.SaveChangesAsync();
+                var allocation = await _employeeDbContext.EmployeeAllocation.FindAsync(id);
+                _employeeDbContext.EmployeeAllocation.Remove(allocation);
+                await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {

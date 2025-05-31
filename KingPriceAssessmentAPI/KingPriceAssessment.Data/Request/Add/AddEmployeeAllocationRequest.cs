@@ -17,5 +17,21 @@ namespace KingPriceAssessment.Data.Request.Add
 
         [Required]
         public int DepartmentId { get; set; }
+
+        public void validation()
+        {
+            if (EmployeeId <= 0)
+            {
+                throw new ArgumentException("EmployeeId must be greater than 0.", nameof(EmployeeId));
+            }
+            if (RoleId <= 0)
+            {
+                throw new ArgumentException("RoleId must be greater than 0.", nameof(RoleId));
+            }
+            if (DepartmentId <= 0)
+            {
+                throw new ArgumentException("DepartmentId must be greater than 0.", nameof(DepartmentId));
+            }
+        }
     }
 }

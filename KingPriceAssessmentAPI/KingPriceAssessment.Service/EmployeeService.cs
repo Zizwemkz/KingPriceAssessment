@@ -21,16 +21,69 @@ namespace KingPriceAssessment.Service
         public Task<IEnumerable<Employee>> GetAllEmployeesAsync()
             => _employeeRepository.GetAllAsync();
 
-        public Task<Employee> GetEmployeeByIdAsync(int id)
-            => _employeeRepository.GetByIdAsync(id);
+        public async Task<Employee> GetEmployeeByIdAsync(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Employee ID must be greater than 0", nameof(id));
+            }
 
-        public Task AddEmployeeAsync(Employee employee)
-            => _employeeRepository.AddAsync(employee);
+            var employee = await _employeeRepository.GetByIdAsync(id);
+            if (employee == null)
+            {
+                throw new KeyNotFoundException($"No Employee found with ID {id}");
+            }
+            return employee;
+        }
 
-        public Task UpdateEmployeeAsync(Employee employee)
-            => _employeeRepository.UpdateAsync(employee);
+        public async Task AddEmployeeAsync(Employee employee)
+        {
 
-        public Task DeleteEmployeeAsync(int id)
-            => _employeeRepository.DeleteAsync(id);
+            var allEmployees = await _employeeRepository.GetAllAsync();
+            if (allEmployees.Any(e => e.EmployeeNumber.Equals(employee.EmployeeNumber, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new ArgumentException($"An employee with the number '{employee.EmployeeNumber}' already exists.");
+            }
+
+            await _employeeRepository.AddAsync(employee);
+        }
+
+        public async Task UpdateEmployeeAsync(Employee employee)
+        {
+            if (employee.Id <= 0)
+            {
+                throw new ArgumentException("Employee ID must be greater than 0", nameof(employee.Id));
+            }
+
+            var existingEmployee = await _employeeRepository.GetByIdAsync(employee.Id);
+            if (existingEmployee == null)
+            {
+                throw new KeyNotFoundException($"No Employee found with ID {employee.Id}");
+            }
+
+            var allEmployees = await _employeeRepository.GetAllAsync();
+            if (allEmployees.Any(e => e.EmployeeNumber.Equals(employee.EmployeeNumber, StringComparison.OrdinalIgnoreCase) && e.Id != employee.Id))
+            {
+                throw new ArgumentException($"An employee with the number '{employee.EmployeeNumber}' already exists.");
+            }
+
+            await _employeeRepository.UpdateAsync(employee);
+        }
+
+        public async Task DeleteEmployeeAsync(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Employee ID must be greater than 0", nameof(id));
+            }
+
+            var existingEmployee = await _employeeRepository.GetByIdAsync(id);
+            if (existingEmployee == null)
+            {
+                throw new KeyNotFoundException($"No Employee found with ID {id}");
+            }
+
+            await _employeeRepository.DeleteAsync(id);
+        }
     }
 }

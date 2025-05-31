@@ -62,13 +62,9 @@ namespace KingPriceAssessment.Service
 
       public async Task UpdateRoleAsync(Role role)
         {
-            if (role == null)
+            if (role.Id <= 0 || role == null)
             {
-                throw new ArgumentNullException(nameof(role));
-            }
-            if (role.Id <= 0)
-            {
-                throw new ArgumentException("Role ID must be greater than 0", nameof(role.Id));
+                throw new ArgumentException("Role ID must be 0 or Null", nameof(role.Id));
             }
             if (string.IsNullOrWhiteSpace(role.RoleName))
             {
@@ -81,7 +77,6 @@ namespace KingPriceAssessment.Service
                 throw new KeyNotFoundException($"No Role found with ID {role.Id}");
             }
 
-            // Optional: Prevent updating to duplicate name
             var roleRecord = await _roleRepository.GetAllAsync();
             if (roleRecord.Any(x => x.RoleName.Equals(role.RoleName, StringComparison.OrdinalIgnoreCase) && x.Id != role.Id))
             {

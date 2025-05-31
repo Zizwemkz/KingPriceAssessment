@@ -7,17 +7,17 @@ namespace KingPriceAssessment.Repositories
 {
     public class RoleRepository : IRoleRepository
     {
-        private readonly EmployeeDbContext _context;
+        private readonly EmployeeDbContext _employeeDbContext;
 
-        public RoleRepository(EmployeeDbContext EmployeeDb)
+        public RoleRepository(EmployeeDbContext employeeDbContext)
         {
-            _context = EmployeeDb;
+            _employeeDbContext = employeeDbContext;
         }
         public async Task<IEnumerable<Role>> GetAllAsync()
         {
             try
             {
-                return await _context.Roles.ToListAsync();
+                return await _employeeDbContext.Roles.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -26,14 +26,9 @@ namespace KingPriceAssessment.Repositories
         }
         public async Task<Role> GetByIdAsync(int id)
         {
-            if (id <= 0)
-                throw new ArgumentException("Role ID must be greater than 0.", nameof(id));
-
             try
             {
-                var role = await _context.Roles.FindAsync(id);
-                if (role == null)
-                    throw new KeyNotFoundException($"No role found with ID {id}.");
+                var role = await _employeeDbContext.Roles.FindAsync(id);
                 return role;
             }
             catch (Exception ex)
@@ -48,11 +43,8 @@ namespace KingPriceAssessment.Repositories
 
             try
             {
-                if (await _context.Roles.AnyAsync(r => r.RoleName.ToLower() == role.RoleName.ToLower()))
-                    throw new InvalidOperationException($"A role with the name '{role.RoleName}' already exists.");
-
-                await _context.Roles.AddAsync(role);
-                await _context.SaveChangesAsync();
+                await _employeeDbContext.Roles.AddAsync(role);
+                await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -66,36 +58,21 @@ namespace KingPriceAssessment.Repositories
 
             try
             {
-                var existingRole = await _context.Roles.FindAsync(role.Id);
-                if (existingRole == null)
-                    throw new KeyNotFoundException($"No role found with ID {role.Id}.");
-
-                // Prevent duplicate role names (case insensitive), excluding current role
-                if (await _context.Roles.AnyAsync(r => r.RoleName.ToLower() == role.RoleName.ToLower() && r.Id != role.Id))
-                    throw new InvalidOperationException($"A role with the name '{role.RoleName}' already exists.");
-
-                _context.Roles.Update(role);
-                await _context.SaveChangesAsync();
+                _employeeDbContext.Roles.Update(role);
+                await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                // Optionally log exception (ex)
                 throw new Exception("An error occurred while updating the role.", ex);
             }
         }
         public async Task DeleteAsync(int id)
         {
-            if (id <= 0)
-                throw new ArgumentException("Role ID must be greater than 0.", nameof(id));
-
             try
             {
-                var rol = await _context.Roles.FindAsync(id);
-                if (rol == null)
-                    throw new KeyNotFoundException($"No role found with ID {id}.");
-
-                _context.Roles.Remove(rol);
-                await _context.SaveChangesAsync();
+                var rol = await _employeeDbContext.Roles.FindAsync(id);
+                _employeeDbContext.Roles.Remove(rol);
+                await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {

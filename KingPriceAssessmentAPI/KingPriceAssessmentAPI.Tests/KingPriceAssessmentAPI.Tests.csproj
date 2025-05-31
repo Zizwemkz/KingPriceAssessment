@@ -20,4 +20,10 @@
     <Using Include="NUnit.Framework" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Tests\Controller\" />
+    <Folder Include="Tests\Repository\" />
+    <Folder Include="Tests\Service\" />
+  </ItemGroup>
+
 </Project>

@@ -23,5 +23,9 @@ namespace KingPriceAssessment.Data.Request.Add
 
         [Range(18, 70, ErrorMessage = "Age must be between 18 and 70.")]
         public int Age { get; set; }
+
+        [Required]
+        [StringLength(30)]
+        public string Position { get; set; }
     }
 }

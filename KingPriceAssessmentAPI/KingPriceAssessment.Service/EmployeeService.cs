@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using KingPriceAssessment.Common.Repository;
-using KingPriceAssessment.Common.Service;
+using KingPriceAssessment.Common.Interfaces.Repository;
+using KingPriceAssessment.Common.Interfaces.Service;
+using KingPriceAssessment.Data.Models.Request.Add;
+using KingPriceAssessment.Data.Models.Request.Update;
+using KingPriceAssessment.Data.Models.Response;
 using KingPriceAssessment.Data.Tables;
 
 namespace KingPriceAssessment.Service
@@ -36,41 +39,69 @@ namespace KingPriceAssessment.Service
             return employee;
         }
 
-        public async Task AddEmployeeAsync(Employee employee)
+        public async Task<ResponseMessage> AddEmployeeAsync(AddEmployeeRequest employeeRequest)
         {
 
             var allEmployees = await _employeeRepository.GetAllAsync();
-            if (allEmployees.Any(e => e.EmployeeNumber.Equals(employee.EmployeeNumber, StringComparison.OrdinalIgnoreCase)))
+            if (allEmployees.Any(e => e.EmployeeNumber.Equals(employeeRequest.EmployeeNumber, StringComparison.OrdinalIgnoreCase)))
             {
-                throw new ArgumentException($"An employee with the number '{employee.EmployeeNumber}' already exists.");
+                throw new ArgumentException($"An employeeRequest with the number '{employeeRequest.EmployeeNumber}' already exists.");
             }
 
+            var employee = new Employee
+            {
+                EmployeeNumber = employeeRequest.EmployeeNumber,
+                Name = employeeRequest.Name,
+                Lastname = employeeRequest.Lastname,
+                Age = employeeRequest.Age,
+                Position = employeeRequest.Position
+            };
             await _employeeRepository.AddAsync(employee);
+
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "Employee added successfully.",
+            };
         }
 
-        public async Task UpdateEmployeeAsync(Employee employee)
+        public async Task<ResponseMessage> UpdateEmployeeAsync(UpdateEmployeeRequest employeeRequest)
         {
-            if (employee.Id <= 0)
+            if (employeeRequest.Id <= 0)
             {
-                throw new ArgumentException("Employee ID must be greater than 0", nameof(employee.Id));
+                throw new ArgumentException("Employee ID must be greater than 0", nameof(employeeRequest.Id));
             }
 
-            var existingEmployee = await _employeeRepository.GetByIdAsync(employee.Id);
+            var existingEmployee = await _employeeRepository.GetByIdAsync(employeeRequest.Id);
             if (existingEmployee == null)
             {
-                throw new KeyNotFoundException($"No Employee found with ID {employee.Id}");
+                throw new KeyNotFoundException($"No Employee found with ID {employeeRequest.Id}");
             }
 
             var allEmployees = await _employeeRepository.GetAllAsync();
-            if (allEmployees.Any(e => e.EmployeeNumber.Equals(employee.EmployeeNumber, StringComparison.OrdinalIgnoreCase) && e.Id != employee.Id))
+            if (allEmployees.Any(e => e.EmployeeNumber.Equals(employeeRequest.EmployeeNumber, StringComparison.OrdinalIgnoreCase) && e.Id != employeeRequest.Id))
             {
-                throw new ArgumentException($"An employee with the number '{employee.EmployeeNumber}' already exists.");
+                throw new ArgumentException($"An employeeRequest with the number '{employeeRequest.EmployeeNumber}' already exists.");
             }
+            var employee = new Employee
+            {
+                EmployeeNumber = employeeRequest.EmployeeNumber,
+                Name = employeeRequest.Name,
+                Lastname = employeeRequest.Lastname,
+                Age = employeeRequest.Age,
+                Position = employeeRequest.Position
+            };
 
             await _employeeRepository.UpdateAsync(employee);
+
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "Employee Updated successfully.",
+            };
         }
 
-        public async Task DeleteEmployeeAsync(int id)
+        public async Task<ResponseMessage> DeleteEmployeeAsync(int id)
         {
             if (id <= 0)
             {
@@ -84,6 +115,12 @@ namespace KingPriceAssessment.Service
             }
 
             await _employeeRepository.DeleteAsync(id);
+
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "Employee added successfully.",
+            };
         }
     }
 }

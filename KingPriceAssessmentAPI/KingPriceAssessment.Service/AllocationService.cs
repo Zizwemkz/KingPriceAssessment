@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using KingPriceAssessment.Common.Repository;
-using KingPriceAssessment.Common.Service;
-using KingPriceAssessment.Data.Request.Add;
+using KingPriceAssessment.Common.Interfaces.Repository;
+using KingPriceAssessment.Common.Interfaces.Service;
+using KingPriceAssessment.Data.Models.Request.Add;
+using KingPriceAssessment.Data.Models.Request.Update;
+using KingPriceAssessment.Data.Models.Response;
 using KingPriceAssessment.Data.Tables;
 
 namespace KingPriceAssessment.Service
@@ -36,52 +38,74 @@ namespace KingPriceAssessment.Service
             return allocation;
         }
 
-        public async Task AddAllocationAsync(EmployeeAllocation allocation)
+        public async Task<ResponseMessage> AddAllocationAsync(AddEmployeeAllocationRequest AddEmployeeAllocationRequest)
         {
-            if (allocation == null)
+            if (AddEmployeeAllocationRequest == null)
             {
-                throw new ArgumentNullException(nameof(allocation));
+                throw new ArgumentNullException(nameof(AddEmployeeAllocationRequest));
             }
            
             var allAllocations = await _allocationRepository.GetAllAsync();
             if (allAllocations.Any(a =>
-                a.EmployeeId == allocation.EmployeeId &&
-                a.RoleId == allocation.RoleId &&
-                a.DepartmentId == allocation.DepartmentId))
+                a.EmployeeId == AddEmployeeAllocationRequest.EmployeeId &&
+                a.RoleId == AddEmployeeAllocationRequest.RoleId &&
+                a.DepartmentId == AddEmployeeAllocationRequest.DepartmentId))
             {
-                throw new ArgumentException("This allocation already exists for the specified employee, role, and department.");
+                throw new ArgumentException("This AddEmployeeAllocationRequest already exists for the specified employee, role, and department.");
             }
 
+            var allocation = new EmployeeAllocation
+            {
+                EmployeeId = AddEmployeeAllocationRequest.EmployeeId,
+                RoleId = AddEmployeeAllocationRequest.RoleId,
+                DepartmentId = AddEmployeeAllocationRequest.DepartmentId
+            };
             await _allocationRepository.AddAsync(allocation);
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "EmployeeAllocation Added successfully.",
+            };
         }
 
-        public async Task UpdateAllocationAsync(EmployeeAllocation allocation)
+        public async Task<ResponseMessage> UpdateAllocationAsync(UpdateEmployeeAllocationRequest employeeAllocationRequest)
         {
-            if (allocation == null)
+            if (employeeAllocationRequest == null)
             {
-                throw new ArgumentNullException(nameof(allocation));
+                throw new ArgumentNullException(nameof(employeeAllocationRequest));
             }
 
-            var existingAllocation = await _allocationRepository.GetByIdAsync(allocation.Id);
+            var existingAllocation = await _allocationRepository.GetByIdAsync(employeeAllocationRequest.Id);
             if (existingAllocation == null)
             {
-                throw new KeyNotFoundException($"No Allocation found with ID {allocation.Id}");
+                throw new KeyNotFoundException($"No Allocation found with ID {employeeAllocationRequest.Id}");
             }
 
             var allAllocations = await _allocationRepository.GetAllAsync();
             if (allAllocations.Any(a =>
-                a.EmployeeId == allocation.EmployeeId &&
-                a.RoleId == allocation.RoleId &&
-                a.DepartmentId == allocation.DepartmentId &&
-                a.Id != allocation.Id))
+                a.EmployeeId == employeeAllocationRequest.EmployeeId &&
+                a.RoleId == employeeAllocationRequest.RoleId &&
+                a.DepartmentId == employeeAllocationRequest.DepartmentId &&
+                a.Id != employeeAllocationRequest.Id))
             {
-                throw new ArgumentException("This allocation already exists for the specified employee, role, and department.");
+                throw new ArgumentException("This AddEmployeeAllocationRequest already exists for the specified employee, role, and department.");
             }
 
+            var allocation = new EmployeeAllocation
+            {
+                EmployeeId = employeeAllocationRequest.EmployeeId,
+                RoleId = employeeAllocationRequest.RoleId,
+                DepartmentId = employeeAllocationRequest.DepartmentId
+            };
             await _allocationRepository.UpdateAsync(allocation);
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "EmployeeAllocation Updated successfully.",
+            };
         }
 
-        public async Task DeleteAllocationAsync(int id)
+        public async Task<ResponseMessage> DeleteAllocationAsync(int id)
         {
             if (id <= 0)
             {
@@ -95,6 +119,11 @@ namespace KingPriceAssessment.Service
             }
 
             await _allocationRepository.DeleteAsync(id);
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "EmployeeAllocation Deleted successfully.",
+            };
         }
     }
 }

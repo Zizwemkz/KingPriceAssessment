@@ -4,8 +4,11 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using KingPriceAssessment.Common.Repository;
-using KingPriceAssessment.Common.Service;
+using KingPriceAssessment.Common.Interfaces.Repository;
+using KingPriceAssessment.Common.Interfaces.Service;
+using KingPriceAssessment.Data.Models.Request.Add;
+using KingPriceAssessment.Data.Models.Request.Update;
+using KingPriceAssessment.Data.Models.Response;
 using KingPriceAssessment.Data.Tables;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,55 +41,67 @@ namespace KingPriceAssessment.Service
             return role;
 
         }
-        public async Task AddRoleAsync(Role role)
+        public async Task<ResponseMessage> AddRoleAsync(AddRoleRequest roleRequest)
         {
-            if (role == null)
+            if (roleRequest == null)
             {
-                throw new ArgumentNullException(nameof(role));
+                throw new ArgumentNullException(nameof(roleRequest));
             }
 
-            if (string.IsNullOrWhiteSpace(role.RoleName))
+            if (string.IsNullOrWhiteSpace(roleRequest.RoleName))
             {
-                throw new ArgumentException("RoleName cannot be empty or whitespace.", nameof(role.RoleName));
+                throw new ArgumentException("RoleName cannot be empty or whitespace.", nameof(roleRequest.RoleName));
             }
 
             var roleRecord = await _roleRepository.GetAllAsync();
-            if (roleRecord.Any(x => x.RoleName.Equals(role.RoleName, StringComparison.OrdinalIgnoreCase)))
+            if (roleRecord.Any(x => x.RoleName.Equals(roleRequest.RoleName, StringComparison.OrdinalIgnoreCase)))
             {
-                throw new ArgumentException($"A role with the name '{role.RoleName}' already exists.");
+                throw new ArgumentException($"A updateRoleRequest with the name '{roleRequest.RoleName}' already exists.");
             }
 
-            await _roleRepository.AddAsync(role);
+             await _roleRepository.AddAsync(roleRequest);
+
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "Role added successfully.",
+            };
         }
              
 
-      public async Task UpdateRoleAsync(Role role)
+      public async Task<ResponseMessage> UpdateRoleAsync(UpdateRoleRequest updateRoleRequest)
         {
-            if (role.Id <= 0 || role == null)
+            if (updateRoleRequest.Id <= 0 || updateRoleRequest == null)
             {
-                throw new ArgumentException("Role ID must be 0 or Null", nameof(role.Id));
+                throw new ArgumentException("Role ID must be 0 or Null", nameof(updateRoleRequest.Id));
             }
-            if (string.IsNullOrWhiteSpace(role.RoleName))
+            if (string.IsNullOrWhiteSpace(updateRoleRequest.RoleName))
             {
-                throw new ArgumentException("RoleName cannot be empty or whitespace.", nameof(role.RoleName));
+                throw new ArgumentException("RoleName cannot be empty or whitespace.", nameof(updateRoleRequest.RoleName));
             }
 
-            var existingRole = await _roleRepository.GetByIdAsync(role.Id);
+            var existingRole = await _roleRepository.GetByIdAsync(updateRoleRequest.Id);
             if (existingRole == null)
             {
-                throw new KeyNotFoundException($"No Role found with ID {role.Id}");
+                throw new KeyNotFoundException($"No Role found with ID {updateRoleRequest.Id}");
             }
 
             var roleRecord = await _roleRepository.GetAllAsync();
-            if (roleRecord.Any(x => x.RoleName.Equals(role.RoleName, StringComparison.OrdinalIgnoreCase) && x.Id != role.Id))
+            if (roleRecord.Any(x => x.RoleName.Equals(updateRoleRequest.RoleName, StringComparison.OrdinalIgnoreCase) && x.Id != updateRoleRequest.Id))
             {
-                throw new ArgumentException($"A role with the name '{role.RoleName}' already exists.");
+                throw new ArgumentException($"A updateRoleRequest with the name '{updateRoleRequest.RoleName}' already exists.");
             }
 
-            await _roleRepository.UpdateAsync(role);
+            await _roleRepository.UpdateAsync(updateRoleRequest);
+
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "Role uodated successfully.",
+            };
         }
 
-        public async Task DeleteRoleAsync(int id)
+        public async Task<ResponseMessage> DeleteRoleAsync(int id)
         {
             if (id <= 0)
             {
@@ -100,6 +115,12 @@ namespace KingPriceAssessment.Service
             }
 
             await _roleRepository.DeleteAsync(id);
+
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "Role Deleted successfully.",
+            };
         }
     }
 }

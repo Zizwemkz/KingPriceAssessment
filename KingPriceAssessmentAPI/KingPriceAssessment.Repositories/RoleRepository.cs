@@ -1,5 +1,7 @@
-﻿using KingPriceAssessment.Common.Repository;
+﻿using KingPriceAssessment.Common.Interfaces.Repository;
 using KingPriceAssessment.Data;
+using KingPriceAssessment.Data.Models.Request.Add;
+using KingPriceAssessment.Data.Models.Request.Update;
 using KingPriceAssessment.Data.Tables;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,37 +35,46 @@ namespace KingPriceAssessment.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while retrieving the role.", ex);
+                throw new Exception("An error occurred while retrieving the roleRequest.", ex);
             }
         }
-        public async Task AddAsync(Role role)
+        public async Task AddAsync(AddRoleRequest roleRequest)
         {
-            if (role == null)
-                throw new ArgumentNullException(nameof(role));
+            if (roleRequest == null)
+                throw new ArgumentNullException(nameof(roleRequest));
 
             try
             {
+                var role = new Role
+                {
+                    RoleName = roleRequest.RoleName
+                };
                 await _employeeDbContext.Roles.AddAsync(role);
                 await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the role.", ex);
+                throw new Exception("An error occurred while adding the roleRequest.", ex);
             }
         }
-        public async Task UpdateAsync(Role role)
+        public async Task UpdateAsync(UpdateRoleRequest roleRequest)
         {
-            if (role == null)
-                throw new ArgumentNullException(nameof(role));
+            if (roleRequest == null)
+                throw new ArgumentNullException(nameof(roleRequest));
 
             try
             {
+                var role = new Role
+                {
+                    Id = roleRequest.Id,
+                    RoleName = roleRequest.RoleName
+                };
                 _employeeDbContext.Roles.Update(role);
                 await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the role.", ex);
+                throw new Exception("An error occurred while updating the roleRequest.", ex);
             }
         }
         public async Task DeleteAsync(int id)
@@ -76,7 +87,7 @@ namespace KingPriceAssessment.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the role.", ex);
+                throw new Exception("An error occurred while deleting the roleRequest.", ex);
             }
         }
     }

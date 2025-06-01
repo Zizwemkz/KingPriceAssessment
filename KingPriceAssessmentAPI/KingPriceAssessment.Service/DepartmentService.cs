@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using KingPriceAssessment.Common.Repository;
-using KingPriceAssessment.Common.Service;
+using KingPriceAssessment.Common.Interfaces.Repository;
+using KingPriceAssessment.Common.Interfaces.Service;
+using KingPriceAssessment.Data.Models.Request.Add;
+using KingPriceAssessment.Data.Models.Request.Update;
+using KingPriceAssessment.Data.Models.Response;
 using KingPriceAssessment.Data.Tables;
 
 namespace KingPriceAssessment.Service
@@ -35,54 +38,75 @@ namespace KingPriceAssessment.Service
             return department;
         }
 
-        public async Task AddDepartmentAsync(Department department)
+        public async Task<ResponseMessage> AddDepartmentAsync(AddDepartmentRequest departmentRequest)
         {
-            if (department == null)
+            if (departmentRequest == null)
             {
-                throw new ArgumentNullException(nameof(department));
+                throw new ArgumentNullException(nameof(departmentRequest));
             }
 
-            if (string.IsNullOrWhiteSpace(department.DepartmentName))
+            if (string.IsNullOrWhiteSpace(departmentRequest.DepartmentName))
             {
-                throw new ArgumentException("DepartmentName cannot be empty or whitespace.", nameof(department.DepartmentName));
+                throw new ArgumentException("DepartmentName cannot be empty or whitespace.", nameof(departmentRequest.DepartmentName));
             }
 
             var allDepartments = await _departmentRepository.GetAllAsync();
-            if (allDepartments.Any(d => d.DepartmentName.Equals(department.DepartmentName, StringComparison.OrdinalIgnoreCase)))
+            if (allDepartments.Any(d => d.DepartmentName.Equals(departmentRequest.DepartmentName, StringComparison.OrdinalIgnoreCase)))
             {
-                throw new ArgumentException($"A department with the name '{department.DepartmentName}' already exists.");
+                throw new ArgumentException($"A departmentRequest with the name '{departmentRequest.DepartmentName}' already exists.");
             }
+            var departmentRecord = new Department
+            {
+                DepartmentName = departmentRequest.DepartmentName
+            };
 
-            await _departmentRepository.AddAsync(department);
+            await _departmentRepository.AddAsync(departmentRecord);
+
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "Department Added successfully.",
+            };
         }
 
-        public async Task UpdateDepartmentAsync(Department department)
+        public async Task<ResponseMessage> UpdateDepartmentAsync(UpdateDepartmentRequest departmentRequest)
         {
-            if (department.Id <= 0 || department ==  null)
+            if (departmentRequest.Id <= 0 || departmentRequest ==  null)
             {
-                throw new ArgumentException("Department ID must be greater than 0", nameof(department.Id));
+                throw new ArgumentException("Department ID must be greater than 0", nameof(departmentRequest.Id));
             }
-            if (string.IsNullOrWhiteSpace(department.DepartmentName))
+            if (string.IsNullOrWhiteSpace(departmentRequest.DepartmentName))
             {
-                throw new ArgumentException("DepartmentName cannot be empty or whitespace.", nameof(department.DepartmentName));
+                throw new ArgumentException("DepartmentName cannot be empty or whitespace.", nameof(departmentRequest.DepartmentName));
             }
 
-            var existingDepartment = await _departmentRepository.GetByIdAsync(department.Id);
+            var existingDepartment = await _departmentRepository.GetByIdAsync(departmentRequest.Id);
             if (existingDepartment == null)
             {
-                throw new KeyNotFoundException($"No Department found with ID {department.Id}");
+                throw new KeyNotFoundException($"No Department found with ID {departmentRequest.Id}");
             }
 
             var allDepartments = await _departmentRepository.GetAllAsync();
-            if (allDepartments.Any(d => d.DepartmentName.Equals(department.DepartmentName, StringComparison.OrdinalIgnoreCase) && d.Id != department.Id))
+            if (allDepartments.Any(d => d.DepartmentName.Equals(departmentRequest.DepartmentName, StringComparison.OrdinalIgnoreCase) && d.Id != departmentRequest.Id))
             {
-                throw new ArgumentException($"A department with the name '{department.DepartmentName}' already exists.");
+                throw new ArgumentException($"A departmentRequest with the name '{departmentRequest.DepartmentName}' already exists.");
             }
 
-            await _departmentRepository.UpdateAsync(department);
+            var departmentRecord = new Department
+            {
+                Id = departmentRequest.Id,
+                DepartmentName = departmentRequest.DepartmentName
+            };
+            await _departmentRepository.UpdateAsync(departmentRecord);
+
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "Department Updated successfully.",
+            };
         }
 
-        public async Task DeleteDepartmentAsync(int id)
+        public async Task<ResponseMessage> DeleteDepartmentAsync(int id)
         {
             if (id <= 0)
             {
@@ -96,6 +120,12 @@ namespace KingPriceAssessment.Service
             }
 
             await _departmentRepository.DeleteAsync(id);
+
+            return new ResponseMessage
+            {
+                Success = true,
+                Message = "Department Deleted successfully.",
+            };
         }
     }
 }

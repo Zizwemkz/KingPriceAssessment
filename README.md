@@ -83,7 +83,7 @@ To launch the API locally:
 ```sh
 dotnet run
 ```
-The API will be available at `https://localhost:5001` (or as configured).
+The API will be available at `https://localhost:44317/swagger/index.html`
 
 ### Running Tests
 To run the CoinDispenser project T1 tests
@@ -94,10 +94,10 @@ dotnet test
 
 ## Design
 ## High Level Architecture Diagrme can be found here: 
-![Design diagrame](/Design/diagrame.png)</a>
+![Design diagrame](./Design/ComponentDiagram.png)</a>
 
 ## Class Diagrame:
-![Design diagrame](/Design/diagrame1.png)</a>
+![Design diagrame](./Design/ClassDiagram1.png)</a>
 
 
 ## Component Descriptions

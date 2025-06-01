@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Azure;
-using System.Web.Http.Results;
 using KingPriceAssessment.Common.Interfaces.Service;
 using KingPriceAssessment.Data.Models.Request.Add;
 using KingPriceAssessment.Data.Models.Request.Update;
+using KingPriceAssessment.Data.Models.Response;
 using KingPriceAssessment.Data.Tables;
 using KingPriceAssessmentAPI.Controllers;
+using KingPriceAssessmentAPI.Tests.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using KingPriceAssessment.Data.Models.Response;
 
 namespace KingPriceAssessmentAPI.Tests.Controllers
 {
@@ -28,13 +28,13 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetAll_ReturnsOkWithRoles()
+        public async Task When_GetAllIsCalled_Then_ShouldReturnOkWithRoles()
         {
             // Arrange
             var response = new List<Role>
             {
-                new Role { Id = 1, RoleName = "Admin" },
-                new Role { Id = 2, RoleName = "User" }
+                new RoleTestBuilder().WithId(1).WithRoleName("Admin").BuildRole(),
+                new RoleTestBuilder().WithId(2).WithRoleName("User").BuildRole()
             };
             _roleServiceMock.Setup(s => s.GetAllRolesAsync()).ReturnsAsync(response);
 
@@ -49,10 +49,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetById_RoleExists_ReturnsOk()
+        public async Task When_GetByIdIsCalled_GivenRoleExists_Then_ShouldReturnOk()
         {
             // Arrange
-            var role = new Role { Id = 1, RoleName = "Admin" };
+            var role = new RoleTestBuilder().WithId(1).WithRoleName("Admin").BuildRole();
             _roleServiceMock.Setup(s => s.GetRoleByIdAsync(1)).ReturnsAsync(role);
 
             // Act
@@ -66,7 +66,7 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetById_RoleNotFound_ReturnsNotFound()
+        public async Task When_GetByIdIsCalled_GivenRoleNotFound_Then_ShouldReturnNotFound()
         {
             // Arrange
             _roleServiceMock.Setup(s => s.GetRoleByIdAsync(1)).ReturnsAsync((Role)null);
@@ -75,15 +75,14 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
             var result = await _controller.GetById(1);
 
             // Assert
-            var okResult = result as OkObjectResult;
-            Assert.That(result, Is.InstanceOf<Microsoft.AspNetCore.Mvc.NotFoundResult>());
+            Assert.That(result, Is.InstanceOf<NotFoundResult>());
         }
 
         [Test]
-        public async Task Add_ValidModel_ReturnsOkWithSuccessResponse()
+        public async Task When_AddIsCalled_GivenValidModel_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var addRequest = new AddRoleRequest { RoleName = "Finance" };
+            var addRequest = new RoleTestBuilder().WithRoleName("Finance").BuildAddRoleRequest();
             var response = new ResponseMessage { Success = true, Message = "Added" };
 
             _roleServiceMock.Setup(s => s.AddRoleAsync(addRequest)).ReturnsAsync(response);
@@ -99,23 +98,23 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Add_InvalidModel_ReturnsBadRequest()
+        public async Task When_AddIsCalled_GivenInvalidModel_Then_ShouldReturnBadRequest()
         {
             // Arrange
             _controller.ModelState.AddModelError("RoleName", "Required");
 
             // Act
-            var result = await _controller.Add(new AddRoleRequest());
+            var result = await _controller.Add(new RoleTestBuilder().WithRoleName(null).BuildAddRoleRequest());
 
             // Assert
-            Assert.That(result, Is.InstanceOf<Microsoft.AspNetCore.Mvc.BadRequestObjectResult>());
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
-        public async Task Add_ServiceReturnsFailure_ReturnsBadRequest()
+        public async Task When_AddIsCalled_GivenServiceReturnsFailure_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var addRequest = new AddRoleRequest { RoleName = "Finance" };
+            var addRequest = new RoleTestBuilder().WithRoleName("Finance").BuildAddRoleRequest();
             var response = new ResponseMessage { Success = false, Message = "Failed" };
 
             _roleServiceMock.Setup(s => s.AddRoleAsync(addRequest)).ReturnsAsync(response);
@@ -124,15 +123,15 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
             var result = await _controller.Add(addRequest);
 
             // Assert
-            Assert.That(result, Is.InstanceOf<Microsoft.AspNetCore.Mvc.BadRequestObjectResult>());
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
-        public async Task Update_ValidModelAndExists_ReturnsOkWithSuccessResponse()
+        public async Task When_UpdateIsCalled_GivenValidModelAndRoleExists_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var updateRequest = new UpdateRoleRequest { Id = 1, RoleName = "Updated" };
-            var role = new Role { Id = 1, RoleName = "Admin" };
+            var updateRequest = new RoleTestBuilder().WithId(1).WithRoleName("Updated").BuildUpdateRoleRequest();
+            var role = new RoleTestBuilder().WithId(1).WithRoleName("Admin").BuildRole();
             var response = new ResponseMessage { Success = true, Message = "Updated" };
 
             _roleServiceMock.Setup(s => s.GetRoleByIdAsync(1)).ReturnsAsync(role);
@@ -149,38 +148,38 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Update_IdMismatch_ReturnsBadRequest()
+        public async Task When_UpdateIsCalled_GivenIdMismatch_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var updateRequest = new UpdateRoleRequest { Id = 2, RoleName = "Updated" };
+            var updateRequest = new RoleTestBuilder().WithId(2).WithRoleName("Updated").BuildUpdateRoleRequest();
 
             // Act
             var result = await _controller.Update(1, updateRequest);
 
             // Assert
-            Assert.That(result, Is.InstanceOf<Microsoft.AspNetCore.Mvc.BadRequestObjectResult>());
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
-        public async Task Update_RoleNotFound_ReturnsNotFound()
+        public async Task When_UpdateIsCalled_GivenRoleNotFound_Then_ShouldReturnNotFound()
         {
             // Arrange
-            var updateRequest = new UpdateRoleRequest { Id = 1, RoleName = "Updated" };
+            var updateRequest = new RoleTestBuilder().WithId(1).WithRoleName("Updated").BuildUpdateRoleRequest();
             _roleServiceMock.Setup(s => s.GetRoleByIdAsync(1)).ReturnsAsync((Role)null);
 
             // Act
             var result = await _controller.Update(1, updateRequest);
 
             // Assert
-            Assert.That(result, Is.InstanceOf<Microsoft.AspNetCore.Mvc.NotFoundResult>());
+            Assert.That(result, Is.InstanceOf<NotFoundResult>());
         }
 
         [Test]
-        public async Task Update_ServiceReturnsFailure_ReturnsBadRequest()
+        public async Task When_UpdateIsCalled_GivenServiceReturnsFailure_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var updateRequest = new UpdateRoleRequest { Id = 1, RoleName = "Updated" };
-            var role = new Role { Id = 1, RoleName = "Admin" };
+            var updateRequest = new RoleTestBuilder().WithId(1).WithRoleName("Updated").BuildUpdateRoleRequest();
+            var role = new RoleTestBuilder().WithId(1).WithRoleName("Admin").BuildRole();
             var response = new ResponseMessage { Success = false, Message = "Failed" };
 
             _roleServiceMock.Setup(s => s.GetRoleByIdAsync(1)).ReturnsAsync(role);
@@ -190,15 +189,14 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
             var result = await _controller.Update(1, updateRequest);
 
             // Assert
-            var okResult = result as OkObjectResult;
-            Assert.That(result, Is.InstanceOf<Microsoft.AspNetCore.Mvc.BadRequestObjectResult>());
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
-        public async Task Delete_RoleExists_ReturnsOkWithSuccessResponse()
+        public async Task When_DeleteIsCalled_GivenRoleExists_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var role = new Role { Id = 1, RoleName = "Admin" };
+            var role = new RoleTestBuilder().WithId(1).WithRoleName("Admin").BuildRole();
             var response = new ResponseMessage { Success = true, Message = "Deleted" };
 
             _roleServiceMock.Setup(s => s.GetRoleByIdAsync(1)).ReturnsAsync(role);
@@ -215,7 +213,7 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Delete_RoleNotFound_ReturnsNotFound()
+        public async Task When_DeleteIsCalled_GivenRoleNotFound_Then_ShouldReturnNotFound()
         {
             // Arrange
             _roleServiceMock.Setup(s => s.GetRoleByIdAsync(1)).ReturnsAsync((Role)null);
@@ -224,14 +222,14 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
             var result = await _controller.Delete(1);
 
             // Assert
-            Assert.That(result, Is.InstanceOf<Microsoft.AspNetCore.Mvc.NotFoundResult>());
+            Assert.That(result, Is.InstanceOf<NotFoundResult>());
         }
 
         [Test]
-        public async Task Delete_ServiceReturnsFailure_ReturnsBadRequest()
+        public async Task When_DeleteIsCalled_GivenServiceReturnsFailure_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var role = new Role { Id = 1, RoleName = "Admin" };
+            var role = new RoleTestBuilder().WithId(1).WithRoleName("Admin").BuildRole();
             var response = new ResponseMessage { Success = false, Message = "Failed" };
 
             _roleServiceMock.Setup(s => s.GetRoleByIdAsync(1)).ReturnsAsync(role);
@@ -241,11 +239,11 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
             var result = await _controller.Delete(1);
 
             // Assert
-            Assert.That(result, Is.InstanceOf<Microsoft.AspNetCore.Mvc.BadRequestObjectResult>());
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
-        public async Task GetRolesByDepartment_ValidDepartment_ReturnsOk()
+        public async Task When_GetRolesByDepartmentIsCalled_GivenValidDepartment_Then_ShouldReturnOk()
         {
             // Arrange
             var departmentName = "Finance";
@@ -270,14 +268,15 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetRolesByDepartment_DepartmentNameMissing_ReturnsBadRequest()
+        public async Task When_GetRolesByDepartmentIsCalled_GivenDepartmentNameMissing_Then_ShouldReturnBadRequest()
         {
             // Act
             var result = await _controller.GetRolesByDepartment(null);
 
             // Assert
-            Assert.That(result, Is.InstanceOf<Microsoft.AspNetCore.Mvc.BadRequestObjectResult>());
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
+
         public void Dispose()
         {
             _controller?.Dispose();

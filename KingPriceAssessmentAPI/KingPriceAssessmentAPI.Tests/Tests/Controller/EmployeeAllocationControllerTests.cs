@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using KingPriceAssessment.Common.Interfaces.Service;
-using KingPriceAssessment.Data.Models.Request.Add;
-using KingPriceAssessment.Data.Models.Request.Update;
 using KingPriceAssessment.Data.Models.Response;
 using KingPriceAssessment.Data.Tables;
 using KingPriceAssessmentAPI.Controllers;
+using KingPriceAssessmentAPI.Tests.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -27,13 +26,13 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetAll_ReturnsOkWithAllocations()
+        public async Task When_GetAllIsCalled_Then_ShouldReturnOkWithAllocations()
         {
             // Arrange
             var allocations = new List<EmployeeAllocation>
             {
-                new EmployeeAllocation { Id = 1, EmployeeId = 2, DepartmentId = 3, RoleId = 4 },
-                new EmployeeAllocation { Id = 2, EmployeeId = 3, DepartmentId = 4, RoleId = 5 }
+                new EmployeeAllocationTestBuilder().WithId(1).WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildEmployeeAllocation(),
+                new EmployeeAllocationTestBuilder().WithId(2).WithEmployeeId(3).WithDepartmentId(4).WithRoleId(5).BuildEmployeeAllocation()
             };
             _employeeAllocationServiceMock.Setup(s => s.GetAllAllocationsAsync()).ReturnsAsync(allocations);
 
@@ -47,10 +46,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetById_AllocationExists_ReturnsOk()
+        public async Task When_GetByIdIsCalled_GivenAllocationExists_Then_ShouldReturnOk()
         {
             // Arrange
-            var allocation = new EmployeeAllocation { Id = 1, EmployeeId = 2, DepartmentId = 3, RoleId = 4 };
+            var allocation = new EmployeeAllocationTestBuilder().WithId(1).WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildEmployeeAllocation();
             _employeeAllocationServiceMock.Setup(s => s.GetAllocationByIdAsync(1)).ReturnsAsync(allocation);
 
             // Act
@@ -63,7 +62,7 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetById_AllocationNotFound_ReturnsNotFound()
+        public async Task When_GetByIdIsCalled_GivenAllocationNotFound_Then_ShouldReturnNotFound()
         {
             // Arrange
             _employeeAllocationServiceMock.Setup(s => s.GetAllocationByIdAsync(1)).ReturnsAsync((EmployeeAllocation)null);
@@ -76,10 +75,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Add_ValidModel_ReturnsOkWithSuccessResponse()
+        public async Task When_AddIsCalled_GivenValidModel_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var addRequest = new AddEmployeeAllocationRequest { EmployeeId = 2, DepartmentId = 3, RoleId = 4 };
+            var addRequest = new EmployeeAllocationTestBuilder().WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildAddRequest();
             var response = new ResponseMessage
             {
                 Success = true,
@@ -98,23 +97,24 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Add_InvalidModel_ReturnsBadRequest()
+        public async Task When_AddIsCalled_GivenInvalidModel_Then_ShouldReturnBadRequest()
         {
             // Arrange
             _controller.ModelState.AddModelError("EmployeeId", "Required");
+            var addRequest = new EmployeeAllocationTestBuilder().WithEmployeeId(0).BuildAddRequest();
 
             // Act
-            var result = await _controller.Add(new AddEmployeeAllocationRequest());
+            var result = await _controller.Add(addRequest);
 
             // Assert
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
-        public async Task Add_ServiceReturnsFailure_ReturnsBadRequest()
+        public async Task When_AddIsCalled_GivenServiceReturnsFailure_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var addRequest = new AddEmployeeAllocationRequest { EmployeeId = 2, DepartmentId = 3, RoleId = 4 };
+            var addRequest = new EmployeeAllocationTestBuilder().WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildAddRequest();
             var response = new ResponseMessage
             {
                 Success = false,
@@ -131,11 +131,11 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Update_ValidModelAndExists_ReturnsOkWithSuccessResponse()
+        public async Task When_UpdateIsCalled_GivenValidModelAndAllocationExists_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var updateRequest = new UpdateEmployeeAllocationRequest { Id = 1, EmployeeId = 2, DepartmentId = 3, RoleId = 4 };
-            var allocation = new EmployeeAllocation { Id = 1, EmployeeId = 2, DepartmentId = 3, RoleId = 4 };
+            var updateRequest = new EmployeeAllocationTestBuilder().WithId(1).WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildUpdateRequest();
+            var allocation = new EmployeeAllocationTestBuilder().WithId(1).WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildEmployeeAllocation();
             var response = new ResponseMessage
             {
                 Success = true,
@@ -155,10 +155,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Update_IdMismatch_ReturnsBadRequest()
+        public async Task When_UpdateIsCalled_GivenIdMismatch_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var updateRequest = new UpdateEmployeeAllocationRequest { Id = 2, EmployeeId = 2, DepartmentId = 3, RoleId = 4 };
+            var updateRequest = new EmployeeAllocationTestBuilder().WithId(2).WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildUpdateRequest();
 
             // Act
             var result = await _controller.Update(1, updateRequest);
@@ -168,10 +168,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Update_AllocationNotFound_ReturnsNotFound()
+        public async Task When_UpdateIsCalled_GivenAllocationNotFound_Then_ShouldReturnNotFound()
         {
             // Arrange
-            var updateRequest = new UpdateEmployeeAllocationRequest { Id = 1, EmployeeId = 2, DepartmentId = 3, RoleId = 4 };
+            var updateRequest = new EmployeeAllocationTestBuilder().WithId(1).WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildUpdateRequest();
             _employeeAllocationServiceMock.Setup(s => s.GetAllocationByIdAsync(1)).ReturnsAsync((EmployeeAllocation)null);
 
             // Act
@@ -182,11 +182,11 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Update_ServiceReturnsFailure_ReturnsBadRequest()
+        public async Task When_UpdateIsCalled_GivenServiceReturnsFailure_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var updateRequest = new UpdateEmployeeAllocationRequest { Id = 1, EmployeeId = 2, DepartmentId = 3, RoleId = 4 };
-            var allocation = new EmployeeAllocation { Id = 1, EmployeeId = 2, DepartmentId = 3, RoleId = 4 };
+            var updateRequest = new EmployeeAllocationTestBuilder().WithId(1).WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildUpdateRequest();
+            var allocation = new EmployeeAllocationTestBuilder().WithId(1).WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildEmployeeAllocation();
             var response = new ResponseMessage
             {
                 Success = false,
@@ -204,10 +204,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Delete_AllocationExists_ReturnsOkWithSuccessResponse()
+        public async Task When_DeleteIsCalled_GivenAllocationExists_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var allocation = new EmployeeAllocation { Id = 1, EmployeeId = 2, DepartmentId = 3, RoleId = 4 };
+            var allocation = new EmployeeAllocationTestBuilder().WithId(1).WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildEmployeeAllocation();
             var response = new ResponseMessage
             {
                 Success = true,
@@ -227,7 +227,7 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Delete_AllocationNotFound_ReturnsNotFound()
+        public async Task When_DeleteIsCalled_GivenAllocationNotFound_Then_ShouldReturnNotFound()
         {
             // Arrange
             _employeeAllocationServiceMock.Setup(s => s.GetAllocationByIdAsync(1)).ReturnsAsync((EmployeeAllocation)null);
@@ -240,10 +240,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Delete_ServiceReturnsFailure_ReturnsBadRequest()
+        public async Task When_DeleteIsCalled_GivenServiceReturnsFailure_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var allocation = new EmployeeAllocation { Id = 1, EmployeeId = 2, DepartmentId = 3, RoleId = 4 };
+            var allocation = new EmployeeAllocationTestBuilder().WithId(1).WithEmployeeId(2).WithDepartmentId(3).WithRoleId(4).BuildEmployeeAllocation();
             var response = new ResponseMessage
             {
                 Success = false,
@@ -261,13 +261,13 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetEmployeesByDepartment_ValidDepartment_ReturnsOk()
+        public async Task When_GetEmployeesByDepartmentIsCalled_GivenValidDepartment_Then_ShouldReturnOk()
         {
             // Arrange
             string departmentName = "HR";
             var employees = new List<EmployeeDetailsDto>
             {
-                new EmployeeDetailsDto { EmployeeNumber = "1", Name = "John", Lastname = "Doe", RoleName = "Manager",DepartmentName = "HR" },
+                new EmployeeDetailsDto { EmployeeNumber = "1", Name = "John", Lastname = "Doe", RoleName = "Manager", DepartmentName = "HR" },
                 new EmployeeDetailsDto { EmployeeNumber = "2", Name = "Jane", Lastname = "Smith", RoleName = "Consultant", DepartmentName = "IT" }
             };
 
@@ -283,7 +283,7 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetEmployeesByDepartment_DepartmentNameMissing_ReturnsBadRequest()
+        public async Task When_GetEmployeesByDepartmentIsCalled_GivenDepartmentNameMissing_Then_ShouldReturnBadRequest()
         {
             // Act
             var result = await _controller.GetEmployeesByDepartment(null);

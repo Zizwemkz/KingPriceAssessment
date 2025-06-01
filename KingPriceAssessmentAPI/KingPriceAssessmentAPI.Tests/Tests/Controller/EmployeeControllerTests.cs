@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using KingPriceAssessment.Common.Interfaces.Service;
-using KingPriceAssessment.Data.Models.Request.Add;
-using KingPriceAssessment.Data.Models.Request.Update;
 using KingPriceAssessment.Data.Models.Response;
 using KingPriceAssessment.Data.Tables;
 using KingPriceAssessmentAPI.Controllers;
+using KingPriceAssessmentAPI.Tests.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -27,13 +26,13 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetAll_ReturnsOkWithEmployees()
+        public async Task When_GetAllIsCalled_Then_ShouldReturnOkWithEmployees()
         {
             // Arrange
             var employees = new List<Employee>
             {
-                new Employee { Id = 1, Name = "John", Lastname = "Doe" },
-                new Employee { Id = 2, Name = "Jane", Lastname = "Smith" }
+                new EmployeeTestBuilder().BuildEmployee(),
+                new EmployeeTestBuilder().BuildEmployee()
             };
             _employeeServiceMock.Setup(s => s.GetAllEmployeesAsync()).ReturnsAsync(employees);
 
@@ -47,10 +46,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetById_EmployeeExists_ReturnsOk()
+        public async Task When_GetByIdIsCalled_GivenEmployeeExists_Then_ShouldReturnOk()
         {
             // Arrange
-            var employee = new Employee { Id = 1, Name = "John", Lastname = "Doe" };
+            var employee = new EmployeeTestBuilder().WithId(1).BuildEmployee();
             _employeeServiceMock.Setup(s => s.GetEmployeeByIdAsync(1)).ReturnsAsync(employee);
 
             // Act
@@ -63,7 +62,7 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetById_EmployeeNotFound_ReturnsNotFound()
+        public async Task When_GetByIdIsCalled_GivenEmployeeDoesNotExist_Then_ShouldReturnNotFound()
         {
             // Arrange
             _employeeServiceMock.Setup(s => s.GetEmployeeByIdAsync(1)).ReturnsAsync((Employee)null);
@@ -76,10 +75,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Add_ValidModel_ReturnsOkWithSuccessResponse()
+        public async Task When_AddIsCalled_GivenValidModel_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var addRequest = new AddEmployeeRequest { Name = "John", Lastname = "Doe" };
+            var addRequest = new EmployeeTestBuilder().BuildAddRequest();
             var response = new ResponseMessage
             {
                 Success = true,
@@ -98,23 +97,25 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Add_InvalidModel_ReturnsBadRequest()
+        public async Task When_AddIsCalled_GivenInvalidModel_Then_ShouldReturnBadRequest()
         {
             // Arrange
             _controller.ModelState.AddModelError("Name", "Required");
 
+            var addRequest = new EmployeeTestBuilder().WithName(null).BuildAddRequest();
+
             // Act
-            var result = await _controller.Add(new AddEmployeeRequest());
+            var result = await _controller.Add(addRequest);
 
             // Assert
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
-        public async Task Add_ServiceReturnsFailure_ReturnsBadRequest()
+        public async Task When_AddIsCalled_GivenServiceReturnsFailure_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var addRequest = new AddEmployeeRequest { Name = "John", Lastname = "Doe" };
+            var addRequest = new EmployeeTestBuilder().BuildAddRequest();
             var response = new ResponseMessage
             {
                 Success = false,
@@ -131,11 +132,11 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Update_ValidModelAndExists_ReturnsOkWithSuccessResponse()
+        public async Task When_UpdateIsCalled_GivenValidModelAndEmployeeExists_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var updateRequest = new UpdateEmployeeRequest { Id = 1, Name = "Updated", Lastname = "User" };
-            var employee = new Employee { Id = 1, Name = "John", Lastname = "Doe" };
+            var updateRequest = new EmployeeTestBuilder().WithId(1).BuildUpdateRequest();
+            var employee = new EmployeeTestBuilder().WithId(1).BuildEmployee();
             var response = new ResponseMessage
             {
                 Success = true,
@@ -155,10 +156,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Update_IdMismatch_ReturnsBadRequest()
+        public async Task When_UpdateIsCalled_GivenIdMismatch_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var updateRequest = new UpdateEmployeeRequest { Id = 2, Name = "Updated", Lastname = "User" };
+            var updateRequest = new EmployeeTestBuilder().WithId(2).BuildUpdateRequest();
 
             // Act
             var result = await _controller.Update(1, updateRequest);
@@ -168,10 +169,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Update_EmployeeNotFound_ReturnsNotFound()
+        public async Task When_UpdateIsCalled_GivenEmployeeDoesNotExist_Then_ShouldReturnNotFound()
         {
             // Arrange
-            var updateRequest = new UpdateEmployeeRequest { Id = 1, Name = "Updated", Lastname = "User" };
+            var updateRequest = new EmployeeTestBuilder().WithId(1).BuildUpdateRequest();
             _employeeServiceMock.Setup(s => s.GetEmployeeByIdAsync(1)).ReturnsAsync((Employee)null);
 
             // Act
@@ -182,11 +183,11 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Update_ServiceReturnsFailure_ReturnsBadRequest()
+        public async Task When_UpdateIsCalled_GivenServiceReturnsFailure_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var updateRequest = new UpdateEmployeeRequest { Id = 1, Name = "Updated", Lastname = "User" };
-            var employee = new Employee { Id = 1, Name = "John", Lastname = "Doe" };
+            var updateRequest = new EmployeeTestBuilder().WithId(1).BuildUpdateRequest();
+            var employee = new EmployeeTestBuilder().WithId(1).BuildEmployee();
             var response = new ResponseMessage
             {
                 Success = false,
@@ -204,10 +205,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Delete_EmployeeExists_ReturnsOkWithSuccessResponse()
+        public async Task When_DeleteIsCalled_GivenEmployeeExists_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var employee = new Employee { Id = 1, Name = "John", Lastname = "Doe" };
+            var employee = new EmployeeTestBuilder().WithId(1).BuildEmployee();
             var response = new ResponseMessage
             {
                 Success = true,
@@ -227,7 +228,7 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Delete_EmployeeNotFound_ReturnsNotFound()
+        public async Task When_DeleteIsCalled_GivenEmployeeDoesNotExist_Then_ShouldReturnNotFound()
         {
             // Arrange
             _employeeServiceMock.Setup(s => s.GetEmployeeByIdAsync(1)).ReturnsAsync((Employee)null);
@@ -240,10 +241,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Delete_ServiceReturnsFailure_ReturnsBadRequest()
+        public async Task When_DeleteIsCalled_GivenServiceReturnsFailure_Then_ShouldReturnBadRequest()
         {
             // Arrange
-            var employee = new Employee { Id = 1, Name = "John", Lastname = "Doe" };
+            var employee = new EmployeeTestBuilder().WithId(1).BuildEmployee();
             var response = new ResponseMessage
             {
                 Success = false,

@@ -1,9 +1,11 @@
-﻿using KingPriceAssessment.Common.Interfaces.Service;
-using KingPriceAssessment.Data.Models.Request.Add;
-using KingPriceAssessment.Data.Models.Request.Update;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using KingPriceAssessment.Common.Interfaces.Service;
 using KingPriceAssessment.Data.Models.Response;
 using KingPriceAssessment.Data.Tables;
 using KingPriceAssessmentAPI.Controllers;
+using KingPriceAssessmentAPI.Tests.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -23,16 +25,14 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
             _controller = new DepartmentController(_departmentServiceMock.Object);
         }
 
-     
-
         [Test]
-        public async Task GetAll_ReturnsOkWithDepartments()
+        public async Task When_GetAllIsCalled_Then_ShouldReturnOkWithDepartments()
         {
             // Arrange
             var departments = new List<Department>
             {
-                new Department { Id = 1, DepartmentName = "HR" },
-                new Department { Id = 2, DepartmentName = "IT" }
+                new DepartmentTestBuilder().WithId(1).WithDepartmentName("HR").BuildDepartment(),
+                new DepartmentTestBuilder().WithId(2).WithDepartmentName("IT").BuildDepartment()
             };
             _departmentServiceMock.Setup(s => s.GetAllDepartmentsAsync()).ReturnsAsync(departments);
 
@@ -47,10 +47,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task GetById_DepartmentExists_ReturnsOk()
+        public async Task When_GetByIdIsCalled_GivenDepartmentExists_Then_ShouldReturnOk()
         {
             // Arrange
-            var department = new Department { Id = 1, DepartmentName = "HR" };
+            var department = new DepartmentTestBuilder().WithId(1).WithDepartmentName("HR").BuildDepartment();
             _departmentServiceMock.Setup(s => s.GetDepartmentByIdAsync(1)).ReturnsAsync(department);
 
             // Act
@@ -64,10 +64,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Add_ValidModel_ReturnsOkWithSuccessResponse()
+        public async Task When_AddIsCalled_GivenValidModel_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var addRequest = new AddDepartmentRequest { DepartmentName = "Finance" };
+            var addRequest = new DepartmentTestBuilder().WithDepartmentName("Finance").BuildAddDepartmentRequest();
             var response = new ResponseMessage
             {
                 Success = true,
@@ -87,11 +87,11 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Update_ValidModelAndExists_ReturnsOkWithSuccessResponse()
+        public async Task When_UpdateIsCalled_GivenValidModelAndDepartmentExists_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var updateRequest = new UpdateDepartmentRequest { Id = 1, DepartmentName = "Updated" };
-            var department = new Department { Id = 1, DepartmentName = "HR" };
+            var updateRequest = new DepartmentTestBuilder().WithId(1).WithDepartmentName("Updated").BuildUpdateDepartmentRequest();
+            var department = new DepartmentTestBuilder().WithId(1).WithDepartmentName("HR").BuildDepartment();
             var response = new ResponseMessage
             {
                 Success = true,
@@ -112,10 +112,10 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
         }
 
         [Test]
-        public async Task Delete_DepartmentExists_ReturnsOkWithSuccessResponse()
+        public async Task When_DeleteIsCalled_GivenDepartmentExists_Then_ShouldReturnOkWithSuccessResponse()
         {
             // Arrange
-            var department = new Department { Id = 1, DepartmentName = "HR" };
+            var department = new DepartmentTestBuilder().WithId(1).WithDepartmentName("HR").BuildDepartment();
             var response = new ResponseMessage
             {
                 Success = true,
@@ -134,6 +134,7 @@ namespace KingPriceAssessmentAPI.Tests.Controllers
             Assert.That(okResult.StatusCode, Is.EqualTo(200));
             Assert.That(okResult.Value, Is.EqualTo(response));
         }
+
         public void Dispose()
         {
             _controller?.Dispose();

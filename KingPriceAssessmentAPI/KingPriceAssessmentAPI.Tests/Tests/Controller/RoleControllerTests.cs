@@ -8,6 +8,7 @@ using KingPriceAssessment.Data.Models.Response;
 using KingPriceAssessment.Data.Tables;
 using KingPriceAssessmentAPI.Controllers;
 using KingPriceAssessmentAPI.Tests.Helpers;
+using KingPriceAssessmentAPI.Tests.Helpers.Controller;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;

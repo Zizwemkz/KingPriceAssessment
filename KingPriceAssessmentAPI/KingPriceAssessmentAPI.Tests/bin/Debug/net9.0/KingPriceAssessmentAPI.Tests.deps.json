@@ -214,6 +214,19 @@
         }
       },
       "Microsoft.EntityFrameworkCore.Analyzers/9.0.5": {},
+      "Microsoft.EntityFrameworkCore.InMemory/9.0.5": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "9.0.5",
+          "Microsoft.Extensions.Caching.Memory": "9.0.5",
+          "Microsoft.Extensions.Logging": "9.0.5"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
+            "assemblyVersion": "9.0.5.0",
+            "fileVersion": "9.0.525.21604"
+          }
+        }
+      },
       "Microsoft.EntityFrameworkCore.Relational/9.0.5": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "9.0.5",
@@ -738,6 +751,18 @@
           }
         }
       },
+      "Moq.EntityFrameworkCore/9.0.0.5": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "9.0.5",
+          "Moq": "4.20.72"
+        },
+        "runtime": {
+          "lib/net8.0/Moq.EntityFrameworkCore.dll": {
+            "assemblyVersion": "5.0.0.0",
+            "fileVersion": "5.0.2.0"
+          }
+        }
+      },
       "Newtonsoft.Json/13.0.1": {
         "runtime": {
           "lib/netstandard2.0/Newtonsoft.Json.dll": {
@@ -1060,7 +1085,9 @@
           "KingPriceAssessment.Repositories": "1.0.0",
           "KingPriceAssessment.Service": "1.0.0",
           "Microsoft.AspNetCore.OpenApi": "9.0.3",
+          "Microsoft.EntityFrameworkCore.InMemory": "9.0.5",
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "1.21.0",
+          "Moq.EntityFrameworkCore": "9.0.0.5",
           "NUnit": "4.3.2",
           "Swashbuckle.AspNetCore": "8.1.2"
         },
@@ -1190,6 +1217,13 @@
       "sha512": "sha512-kWRrD69qCXo7lahPZPt7C127UfK0I024laFZEDMfT3JbALB1EWneFvq1utWM0cNKPFuYis1E1oaYTuRGI/9inQ==",
       "path": "microsoft.entityframeworkcore.analyzers/9.0.5",
       "hashPath": "microsoft.entityframeworkcore.analyzers.9.0.5.nupkg.sha512"
+    },
+    "Microsoft.EntityFrameworkCore.InMemory/9.0.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+nC0uyM5ztN3rV7yUraTlQhXZMV98MP1ZEn4OLlz4c0l5bOGbvHIcvsHA5RitzJTsP5UX/rwfpc3aOsTBS02jA==",
+      "path": "microsoft.entityframeworkcore.inmemory/9.0.5",
+      "hashPath": "microsoft.entityframeworkcore.inmemory.9.0.5.nupkg.sha512"
     },
     "Microsoft.EntityFrameworkCore.Relational/9.0.5": {
       "type": "package",
@@ -1400,6 +1434,13 @@
       "sha512": "sha512-EA55cjyNn8eTNWrgrdZJH5QLFp2L43oxl1tlkoYUKIE9pRwL784OWiTXeCV5ApS+AMYEAlt7Fo03A2XfouvHmQ==",
       "path": "moq/4.20.72",
       "hashPath": "moq.4.20.72.nupkg.sha512"
+    },
+    "Moq.EntityFrameworkCore/9.0.0.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9Vihf1nHittiT4rdsBGnModjNpGdgKmJRlALGczqFopRzVedVWzahcpulQ4VgCovo8Nlt9PgfkKBCHm1WTXdhA==",
+      "path": "moq.entityframeworkcore/9.0.0.5",
+      "hashPath": "moq.entityframeworkcore.9.0.0.5.nupkg.sha512"
     },
     "Newtonsoft.Json/13.0.1": {
       "type": "package",

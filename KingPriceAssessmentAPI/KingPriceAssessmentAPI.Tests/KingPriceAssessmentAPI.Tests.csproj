@@ -23,11 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Tests\Repository\" />
-    <Folder Include="Tests\Service\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\KingPriceAssessment.Common\KingPriceAssessment.Common.csproj" />
     <ProjectReference Include="..\KingPriceAssessmentAPI\KingPriceAssessmentAPI.csproj" />
   </ItemGroup>

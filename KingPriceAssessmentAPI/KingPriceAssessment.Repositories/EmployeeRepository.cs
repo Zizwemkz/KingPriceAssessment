@@ -81,20 +81,21 @@ namespace KingPriceAssessment.Repositories
 
             try
             {
-                var employee = new Employee
-                {
-                    EmployeeNumber = employeeRequest.EmployeeNumber,
-                    Name = employeeRequest.Name,
-                    Lastname = employeeRequest.Lastname,
-                    Age = employeeRequest.Age,
-                    Position = employeeRequest.Position
-                };
-                _employeeDbContext.Employees.Update(employee);
+                var employee = await _employeeDbContext.Employees.FindAsync(employeeRequest.Id);
+                if (employee == null)
+                    throw new Exception($"Employee with Id {employeeRequest.Id} not found.");
+
+                employee.EmployeeNumber = employeeRequest.EmployeeNumber;
+                employee.Name = employeeRequest.Name;
+                employee.Lastname = employeeRequest.Lastname;
+                employee.Age = employeeRequest.Age;
+                employee.Position = employeeRequest.Position;
+
                 await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the Employee.", ex);
+                throw new Exception("An error occurred while updating the Employee.", ex);
             }
         }
 

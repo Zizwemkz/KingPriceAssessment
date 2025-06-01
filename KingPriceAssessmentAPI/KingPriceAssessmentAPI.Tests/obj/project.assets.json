@@ -266,6 +266,24 @@
       "Microsoft.EntityFrameworkCore.Analyzers/9.0.5": {
         "type": "package"
       },
+      "Microsoft.EntityFrameworkCore.InMemory/9.0.5": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "9.0.5",
+          "Microsoft.Extensions.Caching.Memory": "9.0.5",
+          "Microsoft.Extensions.Logging": "9.0.5"
+        },
+        "compile": {
+          "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.EntityFrameworkCore.Relational/9.0.5": {
         "type": "package",
         "dependencies": {
@@ -975,6 +993,19 @@
           "lib/net6.0/Moq.dll": {}
         }
       },
+      "Moq.EntityFrameworkCore/9.0.0.5": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "9.0.0",
+          "Moq": "4.20.70"
+        },
+        "compile": {
+          "lib/net8.0/Moq.EntityFrameworkCore.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/Moq.EntityFrameworkCore.dll": {}
+        }
+      },
       "Newtonsoft.Json/13.0.1": {
         "type": "package",
         "compile": {
@@ -1630,7 +1661,9 @@
           "KingPriceAssessment.Repositories": "1.0.0",
           "KingPriceAssessment.Service": "1.0.0",
           "Microsoft.AspNetCore.OpenApi": "9.0.3",
+          "Microsoft.EntityFrameworkCore.InMemory": "9.0.5",
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "1.21.0",
+          "Moq.EntityFrameworkCore": "9.0.0.5",
           "NUnit": "4.3.2",
           "Swashbuckle.AspNetCore": "8.1.2"
         },
@@ -2130,6 +2163,21 @@
         "docs/PACKAGE.md",
         "microsoft.entityframeworkcore.analyzers.9.0.5.nupkg.sha512",
         "microsoft.entityframeworkcore.analyzers.nuspec"
+      ]
+    },
+    "Microsoft.EntityFrameworkCore.InMemory/9.0.5": {
+      "sha512": "+nC0uyM5ztN3rV7yUraTlQhXZMV98MP1ZEn4OLlz4c0l5bOGbvHIcvsHA5RitzJTsP5UX/rwfpc3aOsTBS02jA==",
+      "type": "package",
+      "path": "microsoft.entityframeworkcore.inmemory/9.0.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "PACKAGE.md",
+        "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll",
+        "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.xml",
+        "microsoft.entityframeworkcore.inmemory.9.0.5.nupkg.sha512",
+        "microsoft.entityframeworkcore.inmemory.nuspec"
       ]
     },
     "Microsoft.EntityFrameworkCore.Relational/9.0.5": {
@@ -3263,6 +3311,19 @@
         "moq.4.20.72.nupkg.sha512",
         "moq.nuspec",
         "readme.md"
+      ]
+    },
+    "Moq.EntityFrameworkCore/9.0.0.5": {
+      "sha512": "9Vihf1nHittiT4rdsBGnModjNpGdgKmJRlALGczqFopRzVedVWzahcpulQ4VgCovo8Nlt9PgfkKBCHm1WTXdhA==",
+      "type": "package",
+      "path": "moq.entityframeworkcore/9.0.0.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net8.0/Moq.EntityFrameworkCore.dll",
+        "moq.entityframeworkcore.9.0.0.5.nupkg.sha512",
+        "moq.entityframeworkcore.nuspec"
       ]
     },
     "Newtonsoft.Json/13.0.1": {

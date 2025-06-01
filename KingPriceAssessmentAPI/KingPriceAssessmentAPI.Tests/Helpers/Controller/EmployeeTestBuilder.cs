@@ -3,7 +3,7 @@ using KingPriceAssessment.Data.Tables;
 using KingPriceAssessment.Data.Models.Request.Add;
 using KingPriceAssessment.Data.Models.Request.Update;
 
-namespace KingPriceAssessmentAPI.Tests.Helpers
+namespace KingPriceAssessmentAPI.Tests.Helpers.Controller
 {
     public class EmployeeTestBuilder
     {

@@ -159,6 +159,7 @@ C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\b
 C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\bin\Debug\net9.0\Microsoft.VisualStudio.TestPlatform.Common.dll
 C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
 C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\bin\Debug\net9.0\Moq.dll
+C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\bin\Debug\net9.0\Moq.EntityFrameworkCore.dll
 C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\bin\Debug\net9.0\Newtonsoft.Json.dll
 C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\bin\Debug\net9.0\Newtonsoft.Json.Bson.dll
 C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\bin\Debug\net9.0\nunit.framework.dll
@@ -276,3 +277,4 @@ C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\o
 C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\obj\Debug\net9.0\KingPriceAssessmentAPI.Tests.pdb
 C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\obj\Debug\net9.0\KingPriceAssessmentAPI.Tests.genruntimeconfig.cache
 C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\obj\Debug\net9.0\ref\KingPriceAssessmentAPI.Tests.dll
+C:\Dev\KingPriceAssessment\KingPriceAssessmentAPI\KingPriceAssessmentAPI.Tests\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.InMemory.dll

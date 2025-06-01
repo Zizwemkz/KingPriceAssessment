@@ -65,12 +65,11 @@ namespace KingPriceAssessment.Repositories
 
             try
             {
-                var role = new Role
-                {
-                    Id = roleRequest.Id,
-                    RoleName = roleRequest.RoleName
-                };
-                _employeeDbContext.Roles.Update(role);
+                var existingRole = await _employeeDbContext.Roles.FindAsync(roleRequest.Id);
+                if (existingRole == null)
+                    throw new Exception($"Role with Id {roleRequest.Id} not found.");
+
+                existingRole.RoleName = roleRequest.RoleName;
                 await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)

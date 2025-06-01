@@ -70,12 +70,12 @@ namespace KingPriceAssessment.Repositories
 
             try
             {
-                var department = new Department
-                {
-                    Id = departmentRequest.Id,
-                    DepartmentName = departmentRequest.DepartmentName
-                };
-                _employeeDbContext.Departments.Update(department);
+                var department = await _employeeDbContext.Departments.FindAsync(departmentRequest.Id);
+                if (department == null)
+                    throw new Exception($"Department with Id {departmentRequest.Id} not found.");
+
+                department.DepartmentName = departmentRequest.DepartmentName;
+
                 await _employeeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -83,6 +83,7 @@ namespace KingPriceAssessment.Repositories
                 throw new Exception("An error occurred while updating the department.", ex);
             }
         }
+
         public async Task DeleteAsync(int id)
         {
             try

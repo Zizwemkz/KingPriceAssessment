@@ -2,28 +2,30 @@
 using KingPriceAssessment.Data.Tables;
 using KingPriceAssessment.Data.Models.Request.Add;
 using KingPriceAssessment.Data.Models.Request.Update;
+using KingPriceAssessment.Data.Models.Response;
+using System.Collections.Generic;
 
-namespace KingPriceAssessmentAPI.Tests.Helpers
+namespace KingPriceAssessmentAPI.Tests.Helpers.Service
 {
-    public class RoleTestBuilder
+    public class RoleServiceTestBuilder
     {
         private int _id;
         private string _roleName;
         private Faker _faker = new Faker();
 
-        public RoleTestBuilder()
+        public RoleServiceTestBuilder()
         {
             _id = _faker.Random.Int(1, 1000);
-            _roleName = _faker.Random.Word();
+            _roleName = _faker.Name.JobTitle();
         }
 
-        public RoleTestBuilder WithId(int id)
+        public RoleServiceTestBuilder WithId(int id)
         {
             _id = id;
             return this;
         }
 
-        public RoleTestBuilder WithRoleName(string roleName)
+        public RoleServiceTestBuilder WithRoleName(string roleName)
         {
             _roleName = roleName;
             return this;
@@ -53,6 +55,16 @@ namespace KingPriceAssessmentAPI.Tests.Helpers
                 Id = _id,
                 RoleName = _roleName
             };
+        }
+
+        public IEnumerable<Role> BuildRolesList(int count = 2)
+        {
+            var roles = new List<Role>();
+            for (int i = 0; i < count; i++)
+            {
+                roles.Add(new RoleServiceTestBuilder().WithId(_id + i).WithRoleName($"{_roleName}{i}").BuildRole());
+            }
+            return roles;
         }
     }
 }

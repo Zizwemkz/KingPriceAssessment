@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KingPriceAssessment.Data.Models.Request.Add;
+using KingPriceAssessment.Data.Models.Request.Update;
 using KingPriceAssessment.Data.Tables;
 
 namespace KingPriceAssessment.Common.Interfaces.Repository
@@ -10,9 +12,9 @@ namespace KingPriceAssessment.Common.Interfaces.Repository
     public interface IEmployeeAllocationRepository
     {
         public Task<IEnumerable<EmployeeAllocation>> GetAllAsync();
-        Task<EmployeeAllocation> GetByIdAsync(int id);
-        Task AddAsync(EmployeeAllocation allocation);
-        Task UpdateAsync(EmployeeAllocation allocation);
-        Task DeleteAsync(int id);
+        public Task<EmployeeAllocation> GetByIdAsync(int id);
+        public Task AddAsync(AddEmployeeAllocationRequest allocation);
+        public Task UpdateAsync(UpdateEmployeeAllocationRequest allocation);
+        public Task DeleteAsync(int id);
     }
 }

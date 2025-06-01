@@ -48,15 +48,7 @@ namespace KingPriceAssessment.Service
                 throw new ArgumentException($"An employeeRequest with the number '{employeeRequest.EmployeeNumber}' already exists.");
             }
 
-            var employee = new Employee
-            {
-                EmployeeNumber = employeeRequest.EmployeeNumber,
-                Name = employeeRequest.Name,
-                Lastname = employeeRequest.Lastname,
-                Age = employeeRequest.Age,
-                Position = employeeRequest.Position
-            };
-            await _employeeRepository.AddAsync(employee);
+            await _employeeRepository.AddAsync(employeeRequest);
 
             return new ResponseMessage
             {
@@ -83,16 +75,8 @@ namespace KingPriceAssessment.Service
             {
                 throw new ArgumentException($"An employeeRequest with the number '{employeeRequest.EmployeeNumber}' already exists.");
             }
-            var employee = new Employee
-            {
-                EmployeeNumber = employeeRequest.EmployeeNumber,
-                Name = employeeRequest.Name,
-                Lastname = employeeRequest.Lastname,
-                Age = employeeRequest.Age,
-                Position = employeeRequest.Position
-            };
 
-            await _employeeRepository.UpdateAsync(employee);
+            await _employeeRepository.UpdateAsync(employeeRequest);
 
             return new ResponseMessage
             {

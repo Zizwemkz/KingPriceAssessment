@@ -54,13 +54,7 @@ namespace KingPriceAssessment.Service
                 throw new ArgumentException("This AddEmployeeAllocationRequest already exists for the specified employee, role, and department.");
             }
 
-            var allocation = new EmployeeAllocation
-            {
-                EmployeeId = AddEmployeeAllocationRequest.EmployeeId,
-                RoleId = AddEmployeeAllocationRequest.RoleId,
-                DepartmentId = AddEmployeeAllocationRequest.DepartmentId
-            };
-            await _allocationRepository.AddAsync(allocation);
+            await _allocationRepository.AddAsync(AddEmployeeAllocationRequest);
             return new ResponseMessage
             {
                 Success = true,
@@ -91,13 +85,7 @@ namespace KingPriceAssessment.Service
                 throw new ArgumentException("This AddEmployeeAllocationRequest already exists for the specified employee, role, and department.");
             }
 
-            var allocation = new EmployeeAllocation
-            {
-                EmployeeId = employeeAllocationRequest.EmployeeId,
-                RoleId = employeeAllocationRequest.RoleId,
-                DepartmentId = employeeAllocationRequest.DepartmentId
-            };
-            await _allocationRepository.UpdateAsync(allocation);
+            await _allocationRepository.UpdateAsync(employeeAllocationRequest);
             return new ResponseMessage
             {
                 Success = true,

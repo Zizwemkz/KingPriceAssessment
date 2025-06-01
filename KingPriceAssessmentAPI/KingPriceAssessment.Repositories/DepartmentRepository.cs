@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using KingPriceAssessment.Common.Interfaces.Repository;
 using KingPriceAssessment.Data;
+using KingPriceAssessment.Data.Models.Request.Add;
+using KingPriceAssessment.Data.Models.Request.Update;
 using KingPriceAssessment.Data.Tables;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,13 +44,17 @@ namespace KingPriceAssessment.Repositories
                 throw new Exception("An error occurred while retrieving the department.", ex);
             }
         }
-        public async Task AddAsync(Department department)
+        public async Task AddAsync(AddDepartmentRequest departmentRequest)
         {
-            if (department == null)
-                throw new ArgumentNullException(nameof(department));
+            if (departmentRequest == null)
+                throw new ArgumentNullException(nameof(departmentRequest));
 
             try
             {
+                var department = new Department
+                {
+                    DepartmentName = departmentRequest.DepartmentName
+                };
                 await _employeeDbContext.Departments.AddAsync(department);
                 await _employeeDbContext.SaveChangesAsync();
             }
@@ -57,13 +63,18 @@ namespace KingPriceAssessment.Repositories
                 throw new Exception("An error occurred while adding the department.", ex);
             }
         }
-        public async Task UpdateAsync(Department department)
+        public async Task UpdateAsync(UpdateDepartmentRequest departmentRequest)
         {
-            if (department == null)
-                throw new ArgumentNullException(nameof(department));
+            if (departmentRequest == null)
+                throw new ArgumentNullException(nameof(departmentRequest));
 
             try
             {
+                var department = new Department
+                {
+                    Id = departmentRequest.Id,
+                    DepartmentName = departmentRequest.DepartmentName
+                };
                 _employeeDbContext.Departments.Update(department);
                 await _employeeDbContext.SaveChangesAsync();
             }

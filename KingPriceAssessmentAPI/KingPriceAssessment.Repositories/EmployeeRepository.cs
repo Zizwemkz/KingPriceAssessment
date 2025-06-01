@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using KingPriceAssessment.Common.Interfaces.Repository;
 using KingPriceAssessment.Data;
+using KingPriceAssessment.Data.Models.Request.Add;
+using KingPriceAssessment.Data.Models.Request.Update;
 using KingPriceAssessment.Data.Tables;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,15 +48,24 @@ namespace KingPriceAssessment.Repositories
             }
         }
 
-        public async Task AddAsync(Employee employee)
+        public async Task AddAsync(AddEmployeeRequest employeeRequest)
         {
-            if (employee == null) 
+            if (employeeRequest == null) 
             {
-                throw new ArgumentNullException(nameof(employee));
+                throw new ArgumentNullException(nameof(employeeRequest));
             }
  
             try
             {
+                var employee = new Employee
+                {
+                    EmployeeNumber = employeeRequest.EmployeeNumber,
+                    Name = employeeRequest.Name,
+                    Lastname = employeeRequest.Lastname,
+                    Age = employeeRequest.Age,
+                    Position = employeeRequest.Position
+                };
+
                 await _employeeDbContext.Employees.AddAsync(employee);
                 await _employeeDbContext.SaveChangesAsync();
             }
@@ -63,13 +74,21 @@ namespace KingPriceAssessment.Repositories
                 throw new HttpResponseException(HttpStatusCode.InternalServerError);
             }
         }
-        public async Task UpdateAsync(Employee employee)
+        public async Task UpdateAsync(UpdateEmployeeRequest employeeRequest)
         {
-            if (employee == null)
-                throw new ArgumentNullException(nameof(employee));
+            if (employeeRequest == null)
+                throw new ArgumentNullException(nameof(employeeRequest));
 
             try
             {
+                var employee = new Employee
+                {
+                    EmployeeNumber = employeeRequest.EmployeeNumber,
+                    Name = employeeRequest.Name,
+                    Lastname = employeeRequest.Lastname,
+                    Age = employeeRequest.Age,
+                    Position = employeeRequest.Position
+                };
                 _employeeDbContext.Employees.Update(employee);
                 await _employeeDbContext.SaveChangesAsync();
             }

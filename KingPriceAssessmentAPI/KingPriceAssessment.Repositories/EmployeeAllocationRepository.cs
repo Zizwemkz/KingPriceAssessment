@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using KingPriceAssessment.Common.Interfaces.Repository;
 using KingPriceAssessment.Data;
+using KingPriceAssessment.Data.Models.Request.Add;
+using KingPriceAssessment.Data.Models.Request.Update;
 using KingPriceAssessment.Data.Tables;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,17 +56,25 @@ namespace KingPriceAssessment.Repositories
         }
        
 
-public async Task AddAsync(EmployeeAllocation allocation)
+        public async Task AddAsync(AddEmployeeAllocationRequest allocationRequest)
         {
+           
+           if (await _employeeDbContext.EmployeeAllocation.AnyAsync(a =>
+                        a.EmployeeId == allocationRequest.EmployeeId &&
+                        a.RoleId == allocationRequest.RoleId &&
+                        a.DepartmentId == allocationRequest.DepartmentId))
+           {
+              throw new InvalidOperationException("This allocation already exists for the specified employee, role, and department.");
+           }
+
             try
             {
-                if (await _employeeDbContext.EmployeeAllocation.AnyAsync(a =>
-                        a.EmployeeId == allocation.EmployeeId &&
-                        a.RoleId == allocation.RoleId &&
-                        a.DepartmentId == allocation.DepartmentId))
+                var allocation = new EmployeeAllocation
                 {
-                    throw new InvalidOperationException("This allocation already exists for the specified employee, role, and department.");
-                }
+                    EmployeeId = allocationRequest.EmployeeId,
+                    RoleId = allocationRequest.RoleId,
+                    DepartmentId = allocationRequest.DepartmentId
+                };
 
                 await _employeeDbContext.EmployeeAllocation.AddAsync(allocation);
                 await _employeeDbContext.SaveChangesAsync();
@@ -75,19 +85,26 @@ public async Task AddAsync(EmployeeAllocation allocation)
             }
         }
 
-        public async Task UpdateAsync(EmployeeAllocation allocation)
+        public async Task UpdateAsync(UpdateEmployeeAllocationRequest allocationRequest)
         {
+            
+            if (await _employeeDbContext.EmployeeAllocation.AnyAsync(a =>
+                        a.EmployeeId == allocationRequest.EmployeeId &&
+                        a.RoleId == allocationRequest.RoleId &&
+                        a.DepartmentId == allocationRequest.DepartmentId &&
+                        a.Id != allocationRequest.Id))
+            {
+                throw new InvalidOperationException("This allocation already exists for the specified employee, role, and department.");
+            }
+
             try
             {
-                if (await _employeeDbContext.EmployeeAllocation.AnyAsync(a =>
-                        a.EmployeeId == allocation.EmployeeId &&
-                        a.RoleId == allocation.RoleId &&
-                        a.DepartmentId == allocation.DepartmentId &&
-                        a.Id != allocation.Id))
+                var allocation = new EmployeeAllocation
                 {
-                    throw new InvalidOperationException("This allocation already exists for the specified employee, role, and department.");
-                }
-
+                    EmployeeId = allocationRequest.EmployeeId,
+                    RoleId = allocationRequest.RoleId,
+                    DepartmentId = allocationRequest.DepartmentId
+                };
                 _employeeDbContext.EmployeeAllocation.Update(allocation);
                 await _employeeDbContext.SaveChangesAsync();
             }
@@ -95,9 +112,6 @@ public async Task AddAsync(EmployeeAllocation allocation)
             {
                 throw new Exception("An error occurred while updating the employee allocation.", ex);
             }
-
-           
-            await _employeeDbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)

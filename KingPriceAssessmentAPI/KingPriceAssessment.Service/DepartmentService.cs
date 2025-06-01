@@ -55,12 +55,8 @@ namespace KingPriceAssessment.Service
             {
                 throw new ArgumentException($"A departmentRequest with the name '{departmentRequest.DepartmentName}' already exists.");
             }
-            var departmentRecord = new Department
-            {
-                DepartmentName = departmentRequest.DepartmentName
-            };
-
-            await _departmentRepository.AddAsync(departmentRecord);
+           
+            await _departmentRepository.AddAsync(departmentRequest);
 
             return new ResponseMessage
             {
@@ -92,12 +88,7 @@ namespace KingPriceAssessment.Service
                 throw new ArgumentException($"A departmentRequest with the name '{departmentRequest.DepartmentName}' already exists.");
             }
 
-            var departmentRecord = new Department
-            {
-                Id = departmentRequest.Id,
-                DepartmentName = departmentRequest.DepartmentName
-            };
-            await _departmentRepository.UpdateAsync(departmentRecord);
+            await _departmentRepository.UpdateAsync(departmentRequest);
 
             return new ResponseMessage
             {

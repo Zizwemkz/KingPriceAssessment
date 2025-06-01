@@ -38,7 +38,7 @@
 
 1. **Clone the repository:**
     ```sh
-    git clone https://github.com/yourusername/your-employeerepo.git
+    git clone https://github.com/Zizwemkz/KingPriceAssessment.git
     cd your-employeerepo
     ```
 
@@ -93,3 +93,32 @@ dotnet test
 ```
 
 ## Design
+## High Level Architecture Diagrme can be found here: 
+![Design diagrame](/Design/diagrame.png)</a>
+
+## Class Diagrame:
+![Design diagrame](/Design/diagrame1.png)</a>
+
+
+## Component Descriptions
+
+- **End User / UI**
+
+
+- **API Layer**
+  - **Controller:** Handles HTTP requests from the UI, validates input, and delegates to the service layer.
+  - **Service:** Contains business logic and orchestrates operations between controllers and repositories.
+  - **Repository:** Handles data access logic, communicates with the DbContext for CRUD operations on the database.
+  - **DbContext:** Manages entity objects during runtime, bridges the domain classes and the database.
+
+- **Database**
+  - Relational database that persists all application data (e.g., employees, roles, departments).
+
+## Flow
+
+1. **End User** interacts with the **UI**.
+2. The **UI** sends HTTP requests to the **API Controller**.
+3. The **Controller** calls the **Service** for business logic.
+4. The **Service** accesses the **Repository** for data operations.
+5. The **Repository** uses the **DbContext** to interact with the **Database**.
+6. Responses are returned back up the chain to the **End User**.

@@ -2,6 +2,7 @@
 using KingPriceAssessment.Data;
 using KingPriceAssessment.Data.Models.Request.Add;
 using KingPriceAssessment.Data.Models.Request.Update;
+using KingPriceAssessment.Data.Models.Response;
 using KingPriceAssessment.Data.Tables;
 using Microsoft.EntityFrameworkCore;
 
@@ -89,6 +90,24 @@ namespace KingPriceAssessment.Repositories
             {
                 throw new Exception("An error occurred while deleting the roleRequest.", ex);
             }
+        }
+
+        public async Task<IEnumerable<DepartmentRolesDto>> GetRolesForDepartmentAsync(string departmentName)
+        {
+            var roles = await (from allocation in _employeeDbContext.EmployeeAllocation
+                               join dept in _employeeDbContext.Departments on allocation.DepartmentId equals dept.Id
+                               join role in _employeeDbContext.Roles on allocation.RoleId equals role.Id
+                               where dept.DepartmentName == departmentName
+                               select role.RoleName).Distinct().ToListAsync();
+
+            return new List<DepartmentRolesDto>
+    {
+        new DepartmentRolesDto
+        {
+            DepartmentName = departmentName,
+            Roles = roles
+        }
+    };
         }
     }
 }

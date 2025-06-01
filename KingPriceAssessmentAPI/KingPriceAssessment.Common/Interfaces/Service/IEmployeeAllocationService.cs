@@ -12,5 +12,6 @@ namespace KingPriceAssessment.Common.Interfaces.Service
         Task<ResponseMessage> AddAllocationAsync(AddEmployeeAllocationRequest allocation);
         Task<ResponseMessage> UpdateAllocationAsync(UpdateEmployeeAllocationRequest allocation);
         Task<ResponseMessage> DeleteAllocationAsync(int id);
+        Task<IEnumerable<EmployeeDetailsDto>> GetEmployeesByDepartmentNameAsync(string departmentName);
     }
 }

@@ -18,5 +18,7 @@ namespace KingPriceAssessment.Common.Interfaces.Service
         Task<ResponseMessage> AddRoleAsync(AddRoleRequest addRoleRequest);
         Task<ResponseMessage> UpdateRoleAsync(UpdateRoleRequest updateRoleRequest);
         Task<ResponseMessage> DeleteRoleAsync(int id);
+
+        Task<IEnumerable<DepartmentRolesDto>> GetRolesForDepartmentAsync(string departmentName);
     }
 }

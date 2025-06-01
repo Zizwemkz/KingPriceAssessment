@@ -122,5 +122,13 @@ namespace KingPriceAssessment.Service
                 Message = "Role Deleted successfully.",
             };
         }
+
+        public async Task<IEnumerable<DepartmentRolesDto>> GetRolesForDepartmentAsync(string departmentName)
+        {
+            if (string.IsNullOrWhiteSpace(departmentName))
+                throw new ArgumentException("Department name cannot be empty.", nameof(departmentName));
+
+            return await _roleRepository.GetRolesForDepartmentAsync(departmentName);
+        }
     }
 }

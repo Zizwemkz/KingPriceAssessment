@@ -17,5 +17,6 @@ namespace KingPriceAssessment.Common.Interfaces.Repository
         public Task AddAsync(AddRoleRequest addRoleRequest);
         public Task UpdateAsync(UpdateRoleRequest addRoleRequest);
         public Task DeleteAsync(int id);
+        Task<IEnumerable<DepartmentRolesDto>> GetRolesForDepartmentAsync(string departmentName);
     }
 }

@@ -113,5 +113,13 @@ namespace KingPriceAssessment.Service
                 Message = "EmployeeAllocation Deleted successfully.",
             };
         }
+
+        public async Task<IEnumerable<EmployeeDetailsDto>> GetEmployeesByDepartmentNameAsync(string departmentName)
+        {
+            if (string.IsNullOrWhiteSpace(departmentName))
+                throw new ArgumentException("Department name cannot be empty.", nameof(departmentName));
+
+            return await _allocationRepository.GetEmployeesByDepartmentNameAsync(departmentName);
+        }
     }
 }

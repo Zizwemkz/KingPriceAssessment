@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KingPriceAssessment.Repositories")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f3f3e0ce3861151c6f1c01915de86479c2b50723")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab40eaf49a444d224299d8ce514afb4d03ef6622")]
 [assembly: System.Reflection.AssemblyProductAttribute("KingPriceAssessment.Repositories")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KingPriceAssessment.Repositories")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

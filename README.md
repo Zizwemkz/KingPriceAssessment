@@ -1,4 +1,5 @@
 # Employee Management API
+
 <div align="center">
   <h1>
    # Employee Management API
@@ -6,7 +7,6 @@
   <p>   
    The Employee Management API is a service that provides CRUD operations for managing employees, roles, and departments within an organization. Built with ASP.NET Core and Entity Framework Core, this project serves as a robust backend for HR systems, admin dashboards, or any business scenario where employee data needs to be managed and queried efficiently.
   </p>
-
 </div>
 
 ## Key Features
@@ -39,7 +39,6 @@
 1. **Clone the repository:**
     ```sh
     git clone https://github.com/Zizwemkz/KingPriceAssessment.git
-    cd your-employeerepo
     ```
 
 2. **Restore NuGet packages:**
@@ -103,7 +102,6 @@ dotnet test
 ## Component Descriptions
 
 - **End User / UI**
-
 
 - **API Layer**
   - **Controller:** Handles HTTP requests from the UI, validates input, and delegates to the service layer.
